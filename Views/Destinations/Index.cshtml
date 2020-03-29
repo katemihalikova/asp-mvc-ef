@@ -1,0 +1,25 @@
+﻿@model IEnumerable<ASP1.Models.Destination>
+
+@{
+    ViewData["Title"] = "Destinations";
+}
+
+<h1>Destinations</h1>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+                    @if (item.CanOrder)
+                    {
+                        <a asp-action="ChooseTimeslot" asp-route-id="@item.ID" class="btn btn-primary">Order</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
