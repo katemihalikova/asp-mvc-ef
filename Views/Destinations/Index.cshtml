@@ -13,7 +13,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
-                    <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.Description, "String200Limit")</p>
                     @if (item.CanOrder)
                     {
                         <a asp-action="ChooseTimeslot" asp-route-id="@item.ID" class="btn btn-primary">Order</a>

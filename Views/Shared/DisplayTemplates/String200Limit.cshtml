@@ -1,0 +1,10 @@
+﻿@model string
+
+@if (Model.Length > 200)
+{
+    <span title="@Model">@Model.Substring(0, 197)…</span>
+}
+else
+{
+    @Model
+}
