@@ -1,0 +1,49 @@
+﻿@model ASP1.ViewModels.ChooseTimeslotViewModel
+
+@{
+    ViewData["Title"] = $"Order: {Model.Destination.Name}";
+}
+
+<h1>Order: @Html.DisplayFor(m => m.Destination.Name)</h1>
+
+<p>@Html.DisplayFor(m => m.Destination.Description)</p>
+
+<form data-destination-id="@Model.Destination.ID">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DateFrom" class="control-label"></label>
+                <input asp-for="DateFrom" class="form-control" value="2020-06-20" />
+                <span asp-validation-for="DateFrom" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateTo" class="control-label"></label>
+                <input asp-for="DateTo" class="form-control" value="2020-07-30" />
+                <span asp-validation-for="DateTo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Attendees" class="control-label"></label>
+                <input asp-for="Attendees" class="form-control" value="" />
+                <span asp-validation-for="Attendees" class="text-danger"></span>
+            </div>
+            @Html.Hidden("TimeslotID")
+            <div class="form-group">
+                <a asp-action="Index" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+        <div class="col col-sm-6 col-md-8 col-lg-9">
+            <div class="row" id="timeslotsArea"></div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <input type="submit" value="Next" class="btn btn-primary" disabled />
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/order.js" asp-append-version="true"></script>
+}
