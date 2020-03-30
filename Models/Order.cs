@@ -35,6 +35,7 @@ namespace ASP1.Models
 
         [Required]
         [Range(1, double.PositiveInfinity)]
+        [Display(Name = "Number of persons")]
         public int Attendees { get; set; }
 
         [StringLength(500)]
