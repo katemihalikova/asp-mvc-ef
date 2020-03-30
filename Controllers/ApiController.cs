@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ASP1.Data;
+using ASP1.Services;
 using ASP1.Models;
 using ASP1.Dto;
 
@@ -15,11 +15,11 @@ namespace ASP1.Controllers
     [ApiController]
     public class ApiController : ControllerBase
     {
-        private readonly AgencyContext _context;
+        private IRepository _repository;
 
-        public ApiController(AgencyContext context)
+        public ApiController(IRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: api/destinations
@@ -41,18 +41,11 @@ namespace ASP1.Controllers
                 return BadRequest(new { error = "Parameter 'date' is required." });
             }
 
-            return await _context.Destinations
-                .Include(d => d.Timeslots)
-                    .ThenInclude(t => t.Orders)
-                .OrderBy(d => d.Name)
-                .Select(d => new {
-                    destination = d,
-                    timeslots = d.Timeslots
+            return (await _repository.GetDestinations())
+                .Select(d => DestinationToDto(d, d.Timeslots
                     .Where(t => t.DateFrom <= parsedDate && t.DateTo >= parsedDate && t.FreeCapacity > 0)
-                    .OrderBy(t => t.DateFrom)
-                })
-                .Select(o => DestinationToDto(o.destination, o.timeslots))
-                .ToListAsync();
+                    .OrderBy(t => t.DateFrom)))
+                .ToList();
         }
 
         // GET: api/destinations/5
@@ -74,10 +67,7 @@ namespace ASP1.Controllers
                 return BadRequest(new { error = "Parameter 'date' is required." });
             }
 
-            var destination = await _context.Destinations
-                .Include(d => d.Timeslots)
-                    .ThenInclude(t => t.Orders)
-                .FirstOrDefaultAsync(d => d.ID == id);
+            var destination = await _repository.GetDestinationByID(id);
 
             if (destination == null)
             {

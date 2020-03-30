@@ -5,28 +5,25 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ASP1.Data;
+using ASP1.Services;
 using ASP1.Models;
 
 namespace ASP1.Controllers
 {
     public class OrdersController : Controller
     {
-        private readonly AgencyContext _context;
+        private IRepository _repository;
 
-        public OrdersController(AgencyContext context)
+        public OrdersController(IRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: Orders/Create
         public async Task<IActionResult> Create(int timeslotId, int attendees)
         {
 
-            var timeslot = await _context.Timeslots
-                .Include(d => d.Destination)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.ID == timeslotId);
+            var timeslot = await _repository.GetTimeslotByID(timeslotId);
 
             var order = new Order { Timeslot = timeslot, TimeslotID = timeslotId, Attendees = attendees };
 
@@ -38,11 +35,12 @@ namespace ASP1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TimeslotID,Name,Surname,Email,Phone,Attendees,Note")] Order order)
         {
-            var timeslot = await _context.Timeslots
-                .Include(d => d.Destination)
-                .Include(d => d.Orders)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.ID == order.TimeslotID);
+            var timeslot = await _repository.GetTimeslotByID(order.TimeslotID);
+
+            if (timeslot == null)
+            {
+                return NotFound();
+            }
 
             try
             {
@@ -51,9 +49,9 @@ namespace ASP1.Controllers
                     if (timeslot.FreeCapacity >= order.Attendees)
                     {
                         order.CreatedAt = DateTime.Now;
-                        _context.Add(order);
-                        await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Create));
+                        _repository.InsertOrder(order);
+                        await _repository.Save();
+                        return RedirectToAction("Index", "Destinations");
                 }
                 else
                 {
