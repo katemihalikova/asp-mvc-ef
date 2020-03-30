@@ -55,7 +55,7 @@
 </form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Destinations" asp-action="ChooseTimeslot" asp-route-id="@Model.Timeslot.DestinationID">Back</a>
 </div>
 
 @section Scripts {
