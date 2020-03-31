@@ -12,6 +12,6 @@ namespace ASP1.Services
         Task<IEnumerable<Timeslot>> GetTimeslots();
         Task<Timeslot> GetTimeslotByID(int timeslotID);
         void InsertOrder(Order order);
-        Task<int> Save();
+        Task Save();
     }
 }

@@ -60,9 +60,9 @@ namespace ASP1.Services
             _context.Add(order);
         }
 
-        public Task<int> Save()
+        public async Task Save()
         {
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }
